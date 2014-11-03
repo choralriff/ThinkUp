@@ -1,7 +1,7 @@
 <?php
 /*
  Plugin Name: Top Words
- Description: What words did you use the most this week/month
+ Description: What words you used the most this past week or month.
  When: Weekly, Saturday for Twitter, Friday for Facebook and Monthly, 25th for Facebook, 27th for Twitter
  */
 /**
@@ -32,6 +32,7 @@
 class TopWordsInsight extends InsightPluginParent implements InsightPlugin {
     /**
      * Words we want to ignore in our insight list.  MySQL stop word list and some custom additions
+     * @var arr
      */
     var $stop_words = array(
         // MySQL stop word list
@@ -158,14 +159,13 @@ class TopWordsInsight extends InsightPluginParent implements InsightPlugin {
             $top_words[$key] = '&quot;'.$word.'&quot;';
         }
 
-        $text = $this->username." mentioned <b>".$top_words[0]."</b> more than anything else on ".ucfirst($instance->network)
-            . " last $period";
+        $text = $this->username." said the word <b>".$top_words[0]."</b> more than anything other on "
+            .ucfirst($instance->network) . " last $period";
         array_shift($top_words);
         $num_words = count($top_words);
         if ($num_words == 1) {
             $text .= ", followed by ".$top_words[0].".";
-        }
-        else if ($num_words > 1) {
+        } else if ($num_words > 1) {
             $top_words[$num_words-1] = 'and '.$top_words[$num_words-1];
             $text .= ", followed by ".join($num_words > 2 ? ", " : " ", $top_words).".";
         } else {
@@ -186,7 +186,6 @@ class TopWordsInsight extends InsightPluginParent implements InsightPlugin {
                 $text .= join($num_words > 2 ? ", " : " ", $old_words).".";
             }
         }
-
 
         $insight = new Insight();
         $insight->slug = 'top_words_'.$period;
