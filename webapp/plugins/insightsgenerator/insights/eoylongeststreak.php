@@ -53,7 +53,7 @@ class EOYLongestStreakInsight extends InsightPluginParent implements InsightPlug
 
         $regenerate = false;
         //testing
-        //$regenerate = true;
+        $regenerate = true;
 
         $should_generate_insight = self::shouldGenerateEndOfYearAnnualInsight(
             $this->slug,
@@ -88,14 +88,14 @@ class EOYLongestStreakInsight extends InsightPluginParent implements InsightPlug
                         'headline' => "%username's longest tweet-streak of %year",
                         'body' => "Sometimes the tweets flow like water and you just " .
                             "don't need a day off. In %year, %username's longest " .
-                            "tweeting streak lasted for %total days, from %date1 to %date2."
+                            "tweeting streak lasted for <strong>%total days</strong>, from %date1 to %date2."
                     ),
                     'everyday' => array(
                         'headline' => "%username has tweeted every single day in %year!",
                         'body' => "Sometimes the tweets flow like water and you just " .
                             "don't need a day off. So far in %year, %username hasn't taken off " .
-                            "a single day, with a streak that has so far lasted for %total " .
-                            "days, from %date1 to %date2."
+                            "a single day, with a streak that has so far lasted for <strong>%total " .
+                            "days</strong>, from %date1 to %date2."
                     ),
                 ),
                 'facebook' => array(
@@ -104,18 +104,19 @@ class EOYLongestStreakInsight extends InsightPluginParent implements InsightPlug
                         'body' => "Facebook is great for sharing what we're up to, " .
                             "and sometimes we're up to a lot. In %year, %username " .
                             "posted at least one status update or comment to Facebook " .
-                            "for %total days in a row, from %date1 to %date2."
+                            "for <strong>%total days</strong> in a row, from %date1 to %date2."
                     ),
                     'everyday' => array(
                         'headline' => "%username has posted to Facebook every single day in %year!",
                         'body' => "Facebook is great for sharing what we're up to, and in %year, " .
                             "%username was up to a lot &mdash; posting at least one time every day " .
-                            "so far this year for a streak of %total days, from %date1 through %date2.",
+                            "so far this year for a streak of <strong>%total days</strong>, ".
+                            "from %date1 through %date2.",
                     ),
                 )
             );
 
-            if ($longest_streak['length']-2 == Date('z')-1) {
+            if ($longest_streak['length']-2 == date('z')-1) {
                 $type = 'everyday';
             } else {
                 $type = 'normal';
@@ -152,11 +153,11 @@ class EOYLongestStreakInsight extends InsightPluginParent implements InsightPlug
                     'total' => $longest_streak['length'],
                     'date1' => $this->getDateFromDay(
                         $longest_streak['start_day'],
-                        'F j'
+                        'F jS'
                     ),
                     'date2' => $this->getDateFromDay(
                         $longest_streak['end_day'],
-                        'F j'
+                        'F jS'
                     ),
                 )
             );
