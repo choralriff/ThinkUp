@@ -56,7 +56,7 @@ class TestOfEOYLongestStreakInsight extends ThinkUpInsightUnitTestCase {
 
     public function testStreakCounting() {
         $insight_plugin = new EOYLongestStreakInsight();
-        $year = Date('Y');
+        $year = date('Y');
 
         $counter = 0;
         // Set up a twenty day streak
@@ -139,7 +139,7 @@ class TestOfEOYLongestStreakInsight extends ThinkUpInsightUnitTestCase {
     public function testTwitterNormalCase() {
         // set up posts with exclamation
         $builders = self::setUpPublicInsight($this->instance);
-        $year = Date('Y');
+        $year = date('Y');
         $counter = 0;
         // Set up a twenty day streak
         for ($i=1; $i<21; $i++) {
@@ -167,11 +167,12 @@ class TestOfEOYLongestStreakInsight extends ThinkUpInsightUnitTestCase {
         $posts = array();
         $insight_plugin = new EOYLongestStreakInsight();
         $insight_plugin->generateInsight($this->instance, null, $posts, 3);
-        //
+
         // Assert that insight got inserted
         $insight_dao = new InsightMySQLDAO();
-        $today = date ('Y-m-d');
-        $result = $insight_dao->getInsight('eoy_longest_streak', $this->instance->id, $today);
+
+        $result = $insight_dao->getInsight('eoy_longest_streak', $this->instance->id,
+            $year.'-'.$insight_plugin->run_date);
         $this->assertNotNull($result);
         $this->assertIsA($result, "Insight");
         $year = date('Y');
@@ -180,15 +181,14 @@ class TestOfEOYLongestStreakInsight extends ThinkUpInsightUnitTestCase {
             "need a day off. In $year, @ev's longest tweeting streak lasted for 20 days, " .
             "from January 1 to January 20.", $result->text);
 
-        $this->dumpRenderedInsight($result, "Normal case, Twitter");
-        // $this->dumpAllHTML();
+        $this->dumpRenderedInsight($result, $this->instance, "Normal case, Twitter");
     }
 
     public function testTwitterEveryDay() {
         // set up posts with exclamation
         $insight_plugin = new EOYLongestStreakInsight();
         $builders = self::setUpPublicInsight($this->instance);
-        $year = Date('Y');
+        $year = date('Y');
         $counter = 0;
         $days = Date('z');
         // Set up an everyday streak
@@ -209,11 +209,11 @@ class TestOfEOYLongestStreakInsight extends ThinkUpInsightUnitTestCase {
 
         $posts = array();
         $insight_plugin->generateInsight($this->instance, null, $posts, 3);
-        //
+
         // Assert that insight got inserted
         $insight_dao = new InsightMySQLDAO();
-        $today = date ('Y-m-d');
-        $result = $insight_dao->getInsight('eoy_longest_streak', $this->instance->id, $today);
+        $result = $insight_dao->getInsight('eoy_longest_streak', $this->instance->id,
+            $year.'-'.$insight_plugin->run_date);
         $this->assertNotNull($result);
         $this->assertIsA($result, "Insight");
         $year = date('Y');
@@ -225,8 +225,7 @@ class TestOfEOYLongestStreakInsight extends ThinkUpInsightUnitTestCase {
             "a streak that has so far lasted for $total_days days, " .
             "from January 1 to $end_date.", $result->text);
 
-        $this->dumpRenderedInsight($result, "Everyday case, Twitter");
-        // $this->dumpAllHTML();
+        $this->dumpRenderedInsight($result, $this->instance, "Everyday case, Twitter");
     }
 
     public function testFacebookNormalCase() {
@@ -234,7 +233,7 @@ class TestOfEOYLongestStreakInsight extends ThinkUpInsightUnitTestCase {
         $this->instance->network_username = 'Mark Zuckerberg';
         $this->instance->network = 'facebook';
         $builders = self::setUpPublicInsight($this->instance);
-        $year = Date('Y');
+        $year = date('Y');
 
         $counter = 0;
         // Set up a twenty day streak
@@ -266,8 +265,8 @@ class TestOfEOYLongestStreakInsight extends ThinkUpInsightUnitTestCase {
         //
         // Assert that insight got inserted
         $insight_dao = new InsightMySQLDAO();
-        $today = date ('Y-m-d');
-        $result = $insight_dao->getInsight('eoy_longest_streak', $this->instance->id, $today);
+        $result = $insight_dao->getInsight('eoy_longest_streak', $this->instance->id,
+            $year.'-'.$insight_plugin->run_date);
         $this->assertNotNull($result);
         $this->assertIsA($result, "Insight");
         $year = date('Y');
@@ -278,8 +277,7 @@ class TestOfEOYLongestStreakInsight extends ThinkUpInsightUnitTestCase {
             "one status update or comment to Facebook for 20 days in a row, from " .
             "January 1 to January 20.", $result->text);
 
-        $this->dumpRenderedInsight($result, "Normal case, Facebook");
-        // $this->dumpAllHTML();
+        $this->dumpRenderedInsight($result, $this->instance, "Normal case, Facebook");
     }
 
     public function testFacebookEveryday() {
@@ -288,7 +286,7 @@ class TestOfEOYLongestStreakInsight extends ThinkUpInsightUnitTestCase {
         $this->instance->network = 'facebook';
         $insight_plugin = new EOYLongestStreakInsight();
         $builders = self::setUpPublicInsight($this->instance);
-        $year = Date('Y');
+        $year = date('Y');
         $counter = 0;
         $days = Date('z');
         // Set up an everyday streak
@@ -310,11 +308,11 @@ class TestOfEOYLongestStreakInsight extends ThinkUpInsightUnitTestCase {
         $posts = array();
         $insight_plugin = new EOYLongestStreakInsight();
         $insight_plugin->generateInsight($this->instance, null, $posts, 3);
-        //
+
         // Assert that insight got inserted
         $insight_dao = new InsightMySQLDAO();
-        $today = date ('Y-m-d');
-        $result = $insight_dao->getInsight('eoy_longest_streak', $this->instance->id, $today);
+        $result = $insight_dao->getInsight('eoy_longest_streak', $this->instance->id,
+            $year.'-'.$insight_plugin->run_date);
         $this->assertNotNull($result);
         $this->assertIsA($result, "Insight");
         $total_days = $days+1;
@@ -326,28 +324,7 @@ class TestOfEOYLongestStreakInsight extends ThinkUpInsightUnitTestCase {
             "so far this year for a streak of $total_days days, from January 1 through $end_date.",
             $result->text);
 
-        $this->dumpRenderedInsight($result, "Everyday case, Facebook");
-        // $this->dumpAllHTML();
-    }
-
-    private function dumpAllHTML() {
-        $controller = new InsightStreamController();
-        $_GET['u'] = $this->instance->network_username;
-        $_GET['n'] = $this->instance->network;
-        $_GET['d'] = date ('Y-m-d');
-        $_GET['s'] = 'eoy_longest_streak';
-        $results = $controller->go();
-        //output this to an HTML file to see the insight fully rendered
-        $this->debug($results);
-    }
-
-    private function dumpRenderedInsight($result, $message) {
-        // return false;
-        if (isset($message)) {
-            $this->debug("<h4 style=\"text-align: center; margin-top: 20px;\">$message</h4>");
-        }
-        $this->debug($this->getRenderedInsightInHTML($result));
-        $this->debug($this->getRenderedInsightInEmail($result));
+        $this->dumpRenderedInsight($result, $this->instance, "Everyday case, Facebook");
     }
 }
 

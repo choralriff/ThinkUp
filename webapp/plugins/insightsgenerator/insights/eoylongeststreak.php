@@ -34,34 +34,46 @@
  */
 
 class EOYLongestStreakInsight extends InsightPluginParent implements InsightPlugin {
+    /**
+     * Slug for this insight
+     **/
+    var $slug = 'eoy_longest_streak';
+    /**
+     * Date to run this insight
+     **/
+    var $run_date = '12-17';
+    //staging
+    //var $run_date = '12-10';
 
     public function generateInsight(Instance $instance, User $user, $last_week_of_posts, $number_days) {
         parent::generateInsight($instance, $user, $last_week_of_posts, $number_days);
         $this->logger->logInfo("Begin generating insight", __METHOD__.','.__LINE__);
 
-        $slug = 'eoy_longest_streak';
-        $date = '12-17';
         $year = date('Y');
 
+        $regenerate = false;
+        //testing
+        //$regenerate = true;
+
         $should_generate_insight = self::shouldGenerateEndOfYearAnnualInsight(
-            $slug,
+            $this->slug,
             $instance,
-            $insight_date = "$year-$date",
-            false,
-            $day_of_year = $date
+            $insight_date = "$year-$this->run_date",
+            $regenerate,
+            $day_of_year = $this->run_date
         );
 
         if ($should_generate_insight) {
+            $this->logger->logInfo("Should generate", __METHOD__.','.__LINE__);
+
             $insight = new Insight();
             $insight->instance_id = $instance->id;
-            $insight->slug = $slug;
-            $insight->date = date('Y-m-d');
-            $insight->eoy = true;
+            $insight->slug = $this->slug;
+            $insight->date = "$year-$this->run_date";
 
             $post_dao = DAOFactory::getDAO('PostDAO');
             $network = $instance->network;
 
-            $post_dao = DAOFactory::getDAO('PostDAO');
             $last_year_of_posts = $post_dao->getThisYearOfPostsIterator(
                 $author_id = $instance->network_user_id,
                 $network = $network
@@ -215,7 +227,7 @@ class EOYLongestStreakInsight extends InsightPluginParent implements InsightPlug
 
     public function getDateFromDay($day_of_year, $format = 'd-m-Y', $year) {
         if (!isset($year)) {
-            $year = Date('Y');
+            $year = date('Y');
         }
         $offset = intval(intval($day_of_year) * 86400);
         $str = date( $format, strtotime('Jan 1, ' . $year) + $offset);
