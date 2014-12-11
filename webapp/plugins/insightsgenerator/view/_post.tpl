@@ -14,7 +14,16 @@ $hide_avatar (optional) do not display the user's avatar, typically used if the 
 {foreach from=$post->links item=l}
   {if !isset($breakphotos) and isset($l->image_src) and $l->image_src neq ""}
   <div class="photo clearfix">
+    <div><a href="{$l->url}">{if isset($l->title) && $l->title neq ''}{$l->title}{elseif ($l->caption neq '')}{$l->caption}{else}{$l->url}{/if}</a></div>
     <a href="{$l->url}"><img src="{$l->image_src}" class="photo_img" alt="Photo from {$post->author_fullname}"></a>
+  </div>
+  {assign var="breakphotos" value="true"}
+  {/if}
+{/foreach}
+{foreach from=$post->links item=l}
+  {if !isset($breaklinks) and isset($l->image_src) and $l->image_src neq ""}
+  <div class="clearfix">
+    <div><a href="{$l->url}">{if isset($l->title) && $l->title neq ''}{$l->title}{elseif ($l->caption neq '')}{$l->caption}{else}{$l->url}{/if}</a></div>
   </div>
   {assign var="breakphotos" value="true"}
   {/if}
