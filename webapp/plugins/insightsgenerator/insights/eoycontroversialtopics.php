@@ -1,7 +1,7 @@
 <?php
 /*
  Plugin Name: Controversial Topics (End of Year)
- Description: Tells user which controversial topics they mentioned or avoided this year.
+ Description: Which controversial topics did you mention or avoid this year.
  When: December 16
  */
 
@@ -50,7 +50,7 @@ class EOYControversialTopicsInsight extends InsightPluginParent implements Insig
         $this->logger->logInfo("Begin generating insight", __METHOD__.','.__LINE__);
 
         if ($instance->network != 'facebook') {
-            $this->logger->logInfo("Done generating insight (Skipped Non-facebook)", __METHOD__.','.__LINE__);
+            $this->logger->logInfo("Done generating insight (Skipped Non-Facebook)", __METHOD__.','.__LINE__);
             return;
         }
 
@@ -151,20 +151,7 @@ class EOYControversialTopicsInsight extends InsightPluginParent implements Insig
 
         $this->logger->logInfo("Done generating insight", __METHOD__.','.__LINE__);
     }
-
-    public function getMaxMonth($point_chart) {
-        $short_month = array_search(max($point_chart),$point_chart);
-        return date('F', strtotime("$short_month 1 2014"));
-    }
-
-    public function hasFBomb(Post $post) {
-        $text = strtolower($post->post_text);
-        $has_fbomb = $post->in_reply_to_user_id != $instance->network_user_id && preg_match('/fuck/', $text);
-
-        return $has_fbomb;
-    }
-
 }
 
 $insights_plugin_registrar = PluginRegistrarInsights::getInstance();
-$insights_plugin_registrar->registerInsightPlugin('EOYFBombCountInsight');
+$insights_plugin_registrar->registerInsightPlugin('EOYControversialTopicsInsight');
